@@ -1,138 +1,132 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using Vector2 = UnityEngine.Vector2;
-using Vector3 = UnityEngine.Vector3;
 
 public class LaunchSystem : MonoBehaviour
 {
-    [Header("Launch Settings")]
-    [SerializeField] private float h = 25;
-    [SerializeField] private float gravity = -18;
-    [SerializeField] private bool debugPath;
-    [SerializeField] private float maxDelta = 200f;
-    
     [Header("References")]
+    [SerializeField] private List<Transform> positions;
     [SerializeField] private Rigidbody ball;
     [SerializeField] private Transform target;
     [SerializeField] private Slider powerSlider;
-    [SerializeField] private List<Transform> shotPositions;
+    [SerializeField] private Image perfectZone;
+    [SerializeField] private Image backboardZone;
 
-    private bool isMobile;
-    private Vector2 startPos;
-    private bool dragging;
-    private int posIndex;
-    private float dragStartTime;
-    private int totalPositions;
-    private float lastPowerRatio;
+    [Header("Settings")]
+    [SerializeField] private float h = 2.8f;
+    [SerializeField] private float gravity = -18f;
+
+    // PERFECT ZONE VALUE
+    private float minPerfect; // Minimum value on the slider
+    private float maxPerfect; // Maximum value on the slider
     
-    private void Awake()
+    // BACKBOARD ZONE VALUE
+    private float minBackboard; // Minimum value on the slider
+    private float maxBackboard; // Maximum value on the slider
+    
+    private float distanceMagnitude; // Distance betweet ball and basket
+    private int posIndex = 0; // Shooting position index
+    private bool isMobile; // Device check
+
+    public void InitLaunch()
     {
-        isMobile = Application.isMobilePlatform;
-        ball.useGravity = false;
-        totalPositions = shotPositions.Count;
-        posIndex = 0;
+        SetSpherePosition();
     }
 
-    void Update()
+    public void SetZone(Transform pos)
     {
-        if (isMobile)
-            TouchInput();
+        Vector3 distance = new Vector3(pos.position.x - ball.position.x, 0, pos.position.z - ball.position.z);
+        distanceMagnitude = distance.magnitude;
+        distanceMagnitude = Mathf.Clamp01(distanceMagnitude / 10f);
+        
+        Debug.Log("Name: " + pos.name + "Basket distance: " + distanceMagnitude);
+        
+        // Set the anchor for the Perfect Zone
+        minPerfect = Mathf.Clamp01(distanceMagnitude-0.07f);
+        maxPerfect = Mathf.Clamp01(distanceMagnitude+0.07f);
+        perfectZone.rectTransform.anchorMin = new Vector2(0f, minPerfect);
+        perfectZone.rectTransform.anchorMax = new Vector2(1f, maxPerfect);
+        perfectZone.rectTransform.sizeDelta = new Vector2(0f, 0f);
+
+        // Set the anchor for the Backboard Zone
+        minBackboard = (maxPerfect + 0.1f);
+        maxBackboard = (minBackboard+0.1f);
+        backboardZone.rectTransform.anchorMin = new Vector2(0f, minBackboard);
+        backboardZone.rectTransform.anchorMax = new Vector2(1f, maxBackboard);
+        backboardZone.rectTransform.sizeDelta = new Vector2(0f,0f);
+
+    }
+
+    public void CheckZone(float t)
+    {
+        if (t > minPerfect && t < maxPerfect)
+        {
+            if (t < 0.50f)
+                h = 1.8f;
+            else if (t > 0.50 && t < 0.60f)
+                h = 2.4f;
+            else if (t > 0.60f)
+                h = 2.6f;
+            PerfectShot();
+        }
         else
-            MouseInput();
-
-        if (debugPath)
-            DrawPath();
-    }
-
-    private void MouseInput()
-    {
-        if(Input.GetMouseButtonDown(0))
-            StartDrag(Input.mousePosition);
-        else if (Input.GetMouseButton(0) && dragging)
-            UpdateDrag(Input.mousePosition);
-        else if (Input.GetMouseButtonUp(0))
-            EndDrag(Input.mousePosition);
-    }
-
-    private void TouchInput()
-    {
-        if (Input.touchCount == 0) return;
-        Touch touch = Input.GetTouch(0);
-        if(touch.phase == TouchPhase.Began)
-            StartDrag(touch.position);
-        else if ((touch.phase == TouchPhase.Moved || touch.phase == TouchPhase.Stationary) && dragging)
-            UpdateDrag(touch.position);
-        else if (touch.phase == TouchPhase.Ended && dragging)
-            EndDrag(touch.position);
-    }
-
-    private void StartDrag(Vector2 pos)
-    {
-        startPos = pos;
-        dragStartTime = Time.time;
-        dragging = true;
-        powerSlider.value = 0f;
-    }
-
-    private void UpdateDrag(Vector2 inputPos)
-    {
-        if (!dragging) return;
-        
-        float deltaY = inputPos.y - startPos.y;
-        if (deltaY <= 0)
         {
-            powerSlider.value = 0f;
-            return;
+            if (t < minPerfect)
+            {
+                PerfectShot();
+                ball.linearVelocity -= AddError(ball.linearVelocity.normalized);
+            } else if (t > maxPerfect)
+            {
+                PerfectShot();
+                ball.linearVelocity += AddError(ball.linearVelocity.normalized);
+            }
+            Debug.Log("a cojone ma come fai a manca er verde");
         }
-        
-        float clampedDelta = Mathf.Clamp(deltaY, 0f, maxDelta);
-        float powerRatio = clampedDelta / maxDelta;
-        
-        powerSlider.value = powerRatio;
-
     }
 
-    private void EndDrag(Vector2 endPos)
-    {
-        dragging = false;
-        float deltaY = endPos.y - startPos.y;
-        if (deltaY <= 0)
-        {
-            powerSlider.value = 0f;
-            return;
-        }
-        
-        float clampedDelta = Mathf.Clamp(deltaY, 0f, maxDelta);
-        float powerRatio = clampedDelta / maxDelta;
-        lastPowerRatio = powerRatio;
-        powerSlider.value = lastPowerRatio;
-
-        Launch();
-    }
-
-    void Launch()
+    private void PerfectShot()
     {
         Physics.gravity = Vector3.up * gravity;
         ball.useGravity = true;
         ball.linearVelocity = CalculateLaunchData().initialVelocity;
     }
+
+    public Vector3 AddError(Vector3 dir)
+    {
+        float angleError = Random.Range(-Mathf.PI, Mathf.PI);
+        Quaternion rotation = Quaternion.Euler(0, angleError, 0);
+        return rotation * dir;
+    }
+    
+    public void SetSpherePosition()
+    {
+        ball.useGravity = false;
+
+        if (posIndex > positions.Count - 1)
+        {
+            posIndex = 0;
+        }
+
+        SetZone(positions[posIndex]);
+        ball.linearVelocity = Vector3.zero;
+        ball.angularVelocity = Vector3.zero;
+        ball.position = positions[posIndex].position;
+        posIndex++;
+    }
     
     LaunchData CalculateLaunchData()
     {
-        float displacementY = target.position.y - ball.position.y; // Displacement of the ball from its initial position to the final position.
+        float displacementY = target.position.y - ball.position.y;
         Vector3 displacementXZ = new Vector3(target.position.x - ball.position.x, 0, target.position.z - ball.position.z);
         float time = Mathf.Sqrt(-2 * h / gravity) + Mathf.Sqrt(2 * (displacementY - h) / gravity);
         Vector3 velocityY = Vector3.up * Mathf.Sqrt(-2 * gravity * h);
         Vector3 velocityXZ = displacementXZ / time;
         Vector3 initialVelocity = velocityXZ + velocityY;
-
-        initialVelocity *= lastPowerRatio;
-
+    
         return new LaunchData(initialVelocity * -Mathf.Sign(gravity), time);
     }
-
-    void DrawPath()
+    
+    public void DrawPath()
     {
         LaunchData launchData = CalculateLaunchData();
         Vector3 prevDrawPoint = ball.position;
@@ -146,24 +140,6 @@ public class LaunchSystem : MonoBehaviour
             Debug.DrawLine(prevDrawPoint, drawPoint, Color.green);
             prevDrawPoint = drawPoint;
         }
-    }
-    
-    public void SetSpherePosition()
-    {
-        ball.useGravity = false;
-
-        if (posIndex < totalPositions - 1)
-        {
-            posIndex++;
-        }
-        else
-        {
-            posIndex = 0;
-        }
-
-        ball.linearVelocity = Vector3.zero;
-        ball.angularVelocity = Vector3.zero;
-        ball.position = shotPositions[posIndex].position;
     }
     
     struct LaunchData
