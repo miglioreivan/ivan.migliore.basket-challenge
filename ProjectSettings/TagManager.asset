@@ -6,6 +6,9 @@ TagManager:
   tags:
   - Floor
   - Hoop
+  - Backboard
+  - TriggerCamera
+  - TriggerBasket
   layers:
   - Default
   - TransparentFX

@@ -16,7 +16,7 @@ public class InputManager : MonoBehaviour
     private float dragStartTime;
     private float lastPowerRatio;
     private float maxDelta = 300f;
-
+    
     void Start()
     {
         launchSystem.InitLaunch();

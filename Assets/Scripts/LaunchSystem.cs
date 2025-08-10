@@ -4,40 +4,58 @@ using UnityEngine.UI;
 
 public class LaunchSystem : MonoBehaviour
 {
-    [Header("References")]
+    [Header("Ball References")]
     [SerializeField] private List<Transform> positions;
     [SerializeField] private Rigidbody ball;
-    [SerializeField] private Transform target;
+    [SerializeField] private BallCollisionHandler collisionHandler;
+    
+    [Header("Target References")]
+    [SerializeField] private Transform hoop;
+    [SerializeField] private Transform backHoop;
+    [SerializeField] private Transform backboard;
+    [SerializeField] private Transform frontHoop;
+
+    [Header("UI Elements")]
     [SerializeField] private Slider powerSlider;
     [SerializeField] private Image perfectZone;
     [SerializeField] private Image backboardZone;
+    [SerializeField] private Image yellowZoneBottom;
+    [SerializeField] private Image yellowZoneTop;
 
     [Header("Settings")]
     [SerializeField] private float h = 2.8f;
     [SerializeField] private float gravity = -18f;
+    
+    public Transform GetHoop { get { return hoop; } }
 
-    // PERFECT ZONE VALUE
+    // PERFECT ZONE VALUE (UI)
     private float minPerfect; // Minimum value on the slider
     private float maxPerfect; // Maximum value on the slider
     
-    // BACKBOARD ZONE VALUE
+    // BACKBOARD ZONE VALUE (UI)
     private float minBackboard; // Minimum value on the slider
     private float maxBackboard; // Maximum value on the slider
+    
+    // YELLOW ZONE VALUE (UI)
+    private float minYellow;
+    private float maxYellow;
     
     private float distanceMagnitude; // Distance betweet ball and basket
     private int posIndex = 0; // Shooting position index
     private bool isMobile; // Device check
+    public Transform currentTarget;
 
-    public void InitLaunch()
+    void Awake()
     {
-        SetSpherePosition();
+        currentTarget = hoop;
     }
+
+    public void InitLaunch() => SetSpherePosition();
 
     public void SetZone(Transform pos)
     {
-        Vector3 distance = new Vector3(pos.position.x - ball.position.x, 0, pos.position.z - ball.position.z);
-        distanceMagnitude = distance.magnitude;
-        distanceMagnitude = Mathf.Clamp01(distanceMagnitude / 10f);
+        Vector3 distXZ = new Vector3(pos.position.x - ball.position.x, 0, pos.position.z - ball.position.z);
+        distanceMagnitude = Mathf.Clamp01(distXZ.magnitude / 10f);
         
         Debug.Log("Name: " + pos.name + "Basket distance: " + distanceMagnitude);
         
@@ -54,70 +72,98 @@ public class LaunchSystem : MonoBehaviour
         backboardZone.rectTransform.anchorMin = new Vector2(0f, minBackboard);
         backboardZone.rectTransform.anchorMax = new Vector2(1f, maxBackboard);
         backboardZone.rectTransform.sizeDelta = new Vector2(0f,0f);
-
+        
+        // Set the anchor for the Yellow Zone
+        minYellow = Mathf.Clamp01(distanceMagnitude - 0.12f);
+        maxYellow = Mathf.Clamp01(distanceMagnitude + 0.12f);
+        yellowZoneBottom.rectTransform.anchorMin = new Vector2(0f, minYellow);
+        yellowZoneBottom.rectTransform.anchorMax = new Vector2(1f, minPerfect);
+        yellowZoneBottom.rectTransform.sizeDelta = new Vector2(0f, 0f);
+        yellowZoneTop.rectTransform.anchorMin = new Vector2(0f, maxPerfect);
+        yellowZoneTop.rectTransform.anchorMax = new Vector2(1f, maxYellow);
+        yellowZoneTop.rectTransform.sizeDelta = new Vector2(0f, 0f);
     }
 
     public void CheckZone(float t)
     {
-        if (t > minPerfect && t < maxPerfect)
+        h = (t < 0.30f) ? 1.9f :
+            (t < 0.50f) ? 2f   :
+            (t < 0.59f) ? 2.4f : 2.8f;
+        
+        bool isPerfectRange = t >= minPerfect && t <= maxPerfect;
+        bool isFrontRange   = t >= minYellow && t < minPerfect;
+        bool isBackRange    = t > maxPerfect && t <= maxYellow;
+        bool isBoardRange   = t >= minBackboard && t <= maxBackboard;
+
+        if (isPerfectRange)
         {
-            if (t < 0.50f)
-                h = 1.8f;
-            else if (t > 0.50 && t < 0.60f)
-                h = 2.4f;
-            else if (t > 0.60f)
-                h = 2.6f;
+            currentTarget = hoop;
             PerfectShot();
+        }
+        else if (isFrontRange || isBackRange || isBoardRange)
+        {
+            if (isFrontRange)
+            {
+                collisionHandler.isBasket = true;
+                currentTarget = frontHoop;
+            }
+            else if (isBackRange)
+            {
+                collisionHandler.isBasket = true;
+                currentTarget = backHoop;
+            }
+            else
+            {
+                collisionHandler.isBackboard = true;
+                currentTarget = backboard;
+            }
+            
+            PerfectShot();
+            h = 0f;
         }
         else
         {
+            PerfectShot();
             if (t < minPerfect)
-            {
-                PerfectShot();
                 ball.linearVelocity -= AddError(ball.linearVelocity.normalized);
-            } else if (t > maxPerfect)
-            {
-                PerfectShot();
+            else if (t > maxPerfect)
                 ball.linearVelocity += AddError(ball.linearVelocity.normalized);
-            }
-            Debug.Log("a cojone ma come fai a manca er verde");
         }
+
     }
 
-    private void PerfectShot()
+    public void PerfectShot()
     {
         Physics.gravity = Vector3.up * gravity;
         ball.useGravity = true;
-        ball.linearVelocity = CalculateLaunchData().initialVelocity;
+        Debug.Log(ball.linearVelocity = CalculateLaunchData().initialVelocity);
     }
 
     public Vector3 AddError(Vector3 dir)
     {
         float angleError = Random.Range(-Mathf.PI, Mathf.PI);
-        Quaternion rotation = Quaternion.Euler(0, angleError, 0);
-        return rotation * dir;
+        return Quaternion.Euler(0, angleError, 0) * dir;
     }
     
     public void SetSpherePosition()
     {
         ball.useGravity = false;
 
-        if (posIndex > positions.Count - 1)
-        {
+        if (posIndex >= positions.Count)
             posIndex = 0;
-        }
 
         SetZone(positions[posIndex]);
         ball.linearVelocity = Vector3.zero;
         ball.angularVelocity = Vector3.zero;
         ball.position = positions[posIndex].position;
+        
         posIndex++;
     }
     
     LaunchData CalculateLaunchData()
     {
-        float displacementY = target.position.y - ball.position.y;
-        Vector3 displacementXZ = new Vector3(target.position.x - ball.position.x, 0, target.position.z - ball.position.z);
+        float displacementY = currentTarget.position.y - ball.position.y;
+        Vector3 displacementXZ = new Vector3(currentTarget.position.x - ball.position.x, 0, currentTarget.position.z - ball.position.z);
         float time = Mathf.Sqrt(-2 * h / gravity) + Mathf.Sqrt(2 * (displacementY - h) / gravity);
         Vector3 velocityY = Vector3.up * Mathf.Sqrt(-2 * gravity * h);
         Vector3 velocityXZ = displacementXZ / time;
@@ -130,8 +176,8 @@ public class LaunchSystem : MonoBehaviour
     {
         LaunchData launchData = CalculateLaunchData();
         Vector3 prevDrawPoint = ball.position;
-
         int resolution = 30;
+        
         for (int i = 0; i <= resolution; i++)
         {
             float simulationTime = i / (float)resolution * launchData.timeToTarget;

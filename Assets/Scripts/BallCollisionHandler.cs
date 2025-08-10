@@ -1,26 +1,47 @@
-using System;
 using UnityEngine;
 
 public class BallCollisionHandler : MonoBehaviour
 {
     [SerializeField] private LaunchSystem controller;
     [SerializeField] private CameraController cam;
-    
+    [SerializeField] private ManagerUI managerUI;
+
+    public bool isBackboard = false;
+    public bool isBasket = false;
+    private bool isPerfectBasket = true;
+
     private void OnCollisionEnter(Collision other)
     {
-        if (other.gameObject.CompareTag("Floor"))
+        string tag = other.gameObject.tag;
+
+        if (tag == "Floor")
         {
-            cam.isGoal = false;
+            cam.isTrigger = false;
             controller.SetSpherePosition();
+        }
+        else if ((tag == "Backboard" && isBackboard) || (tag == "Hoop" && isBasket))
+        {
+            if (tag == "Backboard") isBackboard = false;
+            if (tag == "Hoop") isBasket = false;
+
+            controller.currentTarget = controller.GetHoop;
+            controller.PerfectShot();
+            isPerfectBasket = false;
         }
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("Hoop"))
+        string tag = other.gameObject.tag;
+
+        if (tag == "TriggerCamera")
         {
-            cam.isGoal = true;
-            Debug.Log("CANESTRO!!! 😊");
+            cam.isTrigger = true;
+        }
+        else if (tag == "TriggerBasket")
+        {
+            managerUI.AddPoints(isPerfectBasket ? 3 : 2);
+            isPerfectBasket = true;
         }
     }
 }

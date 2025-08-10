@@ -6,11 +6,11 @@ public class CameraController : MonoBehaviour
     [SerializeField] private Transform lookAtTarget;       // Oggetto da guardare (per orientare la camera)
     [SerializeField] private float smoothSpeed = 5f;
     [SerializeField] private float distance = 3.5f;
-    public bool isGoal = false;
+    public bool isTrigger = false;
 
     void LateUpdate()
     {
-        if (!isGoal)
+        if (!isTrigger)
         {
             Vector3 direction = (lookAtTarget.position - targetToFollow.position).normalized;
             Vector3 offset = new Vector3(direction.x, 0, direction.z) - direction * distance;
