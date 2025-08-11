@@ -7,8 +7,8 @@ TagManager:
   - Floor
   - Hoop
   - Backboard
-  - TriggerCamera
-  - TriggerBasket
+  - BALL-IN-BASKET
+  - Ball
   layers:
   - Default
   - TransparentFX
