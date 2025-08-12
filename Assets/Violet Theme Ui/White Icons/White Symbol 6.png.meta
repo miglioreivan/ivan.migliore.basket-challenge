@@ -1,5 +1,12 @@
 fileFormatVersion: 2
 guid: 47f084b90b4998d47967083fcb6e7b32
+AssetOrigin:
+  serializedVersion: 1
+  productId: 235559
+  packageName: Violet Themed UI
+  packageVersion: 1.1
+  assetPath: Assets/Violet Theme Ui/White Icons/White Symbol 6.png
+  uploadId: 700144
 TextureImporter:
   internalIDToNameTable:
   - first:
@@ -180,10 +187,3 @@ TextureImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
-AssetOrigin:
-  serializedVersion: 1
-  productId: 235559
-  packageName: Violet Themed UI
-  packageVersion: 1.2
-  assetPath: Assets/Violet Theme Ui/White Icons/White Symbol 6.png
-  uploadId: 767621

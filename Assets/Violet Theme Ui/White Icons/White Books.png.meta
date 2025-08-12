@@ -1,5 +1,12 @@
 fileFormatVersion: 2
 guid: b705d170dd672dd49afc1159577a57fb
+AssetOrigin:
+  serializedVersion: 1
+  productId: 235559
+  packageName: Violet Themed UI
+  packageVersion: 1.1
+  assetPath: Assets/Violet Theme Ui/White Icons/White Books.png
+  uploadId: 700144
 TextureImporter:
   internalIDToNameTable:
   - first:
@@ -284,10 +291,3 @@ TextureImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
-AssetOrigin:
-  serializedVersion: 1
-  productId: 235559
-  packageName: Violet Themed UI
-  packageVersion: 1.2
-  assetPath: Assets/Violet Theme Ui/White Icons/White Books.png
-  uploadId: 767621

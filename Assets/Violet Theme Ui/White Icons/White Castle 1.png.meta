@@ -1,5 +1,12 @@
 fileFormatVersion: 2
 guid: 7750fcabc27e4464c94dd37eabcdb89d
+AssetOrigin:
+  serializedVersion: 1
+  productId: 235559
+  packageName: Violet Themed UI
+  packageVersion: 1.1
+  assetPath: Assets/Violet Theme Ui/White Icons/White Castle 1.png
+  uploadId: 700144
 TextureImporter:
   internalIDToNameTable:
   - first:
@@ -258,10 +265,3 @@ TextureImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
-AssetOrigin:
-  serializedVersion: 1
-  productId: 235559
-  packageName: Violet Themed UI
-  packageVersion: 1.2
-  assetPath: Assets/Violet Theme Ui/White Icons/White Castle 1.png
-  uploadId: 767621

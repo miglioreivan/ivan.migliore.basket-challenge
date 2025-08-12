@@ -1,5 +1,12 @@
 fileFormatVersion: 2
 guid: a191b676b9627ca44aceb3a028607100
+AssetOrigin:
+  serializedVersion: 1
+  productId: 235559
+  packageName: Violet Themed UI
+  packageVersion: 1.1
+  assetPath: Assets/Violet Theme Ui/Colored Icons/leaf.png
+  uploadId: 700144
 TextureImporter:
   internalIDToNameTable:
   - first:
@@ -154,10 +161,3 @@ TextureImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
-AssetOrigin:
-  serializedVersion: 1
-  productId: 235559
-  packageName: Violet Themed UI
-  packageVersion: 1.2
-  assetPath: Assets/Violet Theme Ui/Colored Icons/leaf.png
-  uploadId: 767621

@@ -2,51 +2,80 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    [SerializeField] private Transform targetToFollow;     // Object to follow
-    [SerializeField] private Transform lookAtTarget;       // Object to look at (to orient the camera)
+    // SERIALIZED FIELDS
+    // These are used to configure the script from the Unity editor
+    [SerializeField] private Transform targetToFollow;
+    [SerializeField] private Transform lookAtTarget;
     [SerializeField] private float smoothSpeed = 5f;
     [SerializeField] private float distance = 3.5f;
-    public bool isTrigger = false;
 
-    void OnEnable()
+    // PROPERTIES
+    // The `IsTrigger` property manages the camera's state
+    // and provides a clear public interface
+    public bool IsTrigger { get; private set; } = false;
+
+    // CALLBACK METHODS
+    // Used to subscribe and unsubscribe from events in a clean way
+    private void OnEnable()
     {
-        // Subscribe to events to control camera behavior
         CameraTriggerZone.OnCameraStopFollow += OnCameraStopFollow;
         BallCollisionHandler.OnShotEnded += OnShotEnded;
     }
 
-    void OnDisable()
+    private void OnDisable()
     {
-        // Unsubscribe from events to prevent memory leaks
         CameraTriggerZone.OnCameraStopFollow -= OnCameraStopFollow;
         BallCollisionHandler.OnShotEnded -= OnShotEnded;
     }
-    
-    void LateUpdate()
-    {
-        if (!isTrigger)
-        {
-            // Calculate the camera's new position
-            Vector3 direction = (lookAtTarget.position - targetToFollow.position).normalized;
-            Vector3 offset = new Vector3(direction.x, 0, direction.z) - direction * distance;
 
-            Vector3 pos = targetToFollow.position + offset;
-            pos.y = targetToFollow.position.y;
-            // Smoothly move the camera to the new position
-            transform.position = Vector3.Lerp(transform.position, pos, Time.deltaTime * smoothSpeed);
+    // UPDATE LOGIC
+    // The logic is executed in `LateUpdate` to avoid jitter
+    // when the camera follows a moving object
+    private void LateUpdate()
+    {
+        // If we are not in trigger mode, we follow the target
+        if (!IsTrigger)
+        {
+            UpdateCameraPosition();
         }
 
-        // Always look at the target
+        // The camera always looks at the target
+        LookAtTarget();
+    }
+
+    // PRIVATE SUPPORT METHODS
+    private void UpdateCameraPosition()
+    {
+        // Calcola il vettore di direzione dal targetToFollow a lookAtTarget
+        Vector3 direction = (targetToFollow.position - lookAtTarget.position).normalized;
+
+        // Calcola la posizione desiderata della telecamera
+        // L'offset è calcolato moltiplicando la direzione per la distanza desiderata
+        Vector3 desiredPosition = targetToFollow.position + direction * distance;
+
+        // Imposta la posizione y della telecamera per mantenerla stabile
+        desiredPosition.y = targetToFollow.position.y;
+
+        // Sposta la telecamera in modo fluido verso la posizione desiderata
+        transform.position = Vector3.Lerp(transform.position, desiredPosition, Time.deltaTime * smoothSpeed);
+    }
+
+    private void LookAtTarget()
+    {
+        // The camera points towards the target
         transform.LookAt(lookAtTarget);
     }
 
+    // EVENT HANDLING METHODS
     private void OnCameraStopFollow()
     {
-        isTrigger = true;
+        // When the event is called, the camera stops following
+        IsTrigger = true;
     }
-    
+
     private void OnShotEnded()
     {
-        isTrigger = false;
+        // When the event is called, the camera resumes following
+        IsTrigger = false;
     }
 }

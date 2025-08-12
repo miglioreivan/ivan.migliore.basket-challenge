@@ -32,7 +32,6 @@ public class InputManager : MonoBehaviour
 
     void Start()
     {
-        CanDrag = true;
         isMobile = Application.isMobilePlatform;
     }
     
@@ -53,6 +52,7 @@ public class InputManager : MonoBehaviour
     // Handles input from mouse or touch
     private void HandleInput()
     {
+        Debug.Log("Handle Input");
         Vector2 currentPosition;
         bool inputBegan, inputHeld, inputEnded;
 
@@ -67,7 +67,7 @@ public class InputManager : MonoBehaviour
         }
         else // Desktop
         {
-            currentPosition = Input.mousePosition;
+            Debug.Log(currentPosition = Input.mousePosition);
             inputBegan = Input.GetMouseButtonDown(0);
             inputHeld = Input.GetMouseButton(0);
             inputEnded = Input.GetMouseButtonUp(0);
@@ -107,6 +107,7 @@ public class InputManager : MonoBehaviour
 
     private void EndDrag(Vector2 endPos)
     {
+        Debug.Log("End Drag");
         isDragging = false;
 
         float powerRatio = CalculatePowerRatio(endPos);

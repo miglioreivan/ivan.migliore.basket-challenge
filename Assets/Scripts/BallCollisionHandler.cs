@@ -123,7 +123,7 @@ public class BallCollisionHandler : MonoBehaviour
         
         // Reset ball physics
         rb.useGravity = false;
-        rb.linearVelocity = Vector3.zero;
+        rb.velocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
     }
 }

@@ -1,5 +1,12 @@
 fileFormatVersion: 2
 guid: 37d7ae99dc83d1d4887fb685af0baea7
+AssetOrigin:
+  serializedVersion: 1
+  productId: 235559
+  packageName: Violet Themed UI
+  packageVersion: 1.1
+  assetPath: Assets/Violet Theme Ui/White Icons/White Gem 2.png
+  uploadId: 700144
 TextureImporter:
   internalIDToNameTable:
   - first:
@@ -336,10 +343,3 @@ TextureImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
-AssetOrigin:
-  serializedVersion: 1
-  productId: 235559
-  packageName: Violet Themed UI
-  packageVersion: 1.2
-  assetPath: Assets/Violet Theme Ui/White Icons/White Gem 2.png
-  uploadId: 767621

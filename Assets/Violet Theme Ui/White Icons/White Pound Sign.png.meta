@@ -1,5 +1,12 @@
 fileFormatVersion: 2
 guid: c43d9c4d70f1b9a4eb4b8cb81c259094
+AssetOrigin:
+  serializedVersion: 1
+  productId: 235559
+  packageName: Violet Themed UI
+  packageVersion: 1.1
+  assetPath: Assets/Violet Theme Ui/White Icons/White Pound Sign.png
+  uploadId: 700144
 TextureImporter:
   internalIDToNameTable:
   - first:
@@ -154,10 +161,3 @@ TextureImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
-AssetOrigin:
-  serializedVersion: 1
-  productId: 235559
-  packageName: Violet Themed UI
-  packageVersion: 1.2
-  assetPath: Assets/Violet Theme Ui/White Icons/White Pound Sign.png
-  uploadId: 767621

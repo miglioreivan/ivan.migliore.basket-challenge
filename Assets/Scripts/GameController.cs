@@ -48,9 +48,6 @@ public class GameController : MonoBehaviour
         
         // Subscribe to the event to notify the end of the drag.
         InputManager.OnDragEnded += CheckZone;
-        
-        // Disable dragging at the start of the game until the ball is in place.
-        inputManager.CanDrag = false;
     }
 
     void OnDestroy()
@@ -93,7 +90,7 @@ public class GameController : MonoBehaviour
         
         // Move the ball and re-enable dragging.
         ball.position = pos.position;
-        inputManager.CanDrag = true;
+        Debug.Log(inputManager.CanDrag = true);
     }
 
     // Handles the ball's launch
@@ -145,8 +142,8 @@ public class GameController : MonoBehaviour
             LaunchBall();
             
             // Add a small random error.
-            Vector3 error = (t < minPerfect) ? AddError(-ball.linearVelocity.normalized) : AddError(ball.linearVelocity.normalized);
-            ball.linearVelocity += error;
+            Vector3 error = (t < minPerfect) ? AddError(-ball.velocity.normalized) : AddError(ball.velocity.normalized);
+            ball.velocity += error;
         }
     }
     
@@ -162,7 +159,7 @@ public class GameController : MonoBehaviour
             return;
         }
         
-        ball.linearVelocity = vel;
+        ball.velocity = vel;
     }
     
     public Vector3 AddError(Vector3 dir)

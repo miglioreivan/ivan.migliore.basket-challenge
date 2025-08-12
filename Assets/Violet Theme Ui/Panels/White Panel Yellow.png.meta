@@ -1,5 +1,12 @@
 fileFormatVersion: 2
 guid: 8881b55d27a421e40912e51f02f4791f
+AssetOrigin:
+  serializedVersion: 1
+  productId: 235559
+  packageName: Violet Themed UI
+  packageVersion: 1.1
+  assetPath: Assets/Violet Theme Ui/Panels/White Panel Yellow.png
+  uploadId: 700144
 TextureImporter:
   internalIDToNameTable:
   - first:
@@ -154,10 +161,3 @@ TextureImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
-AssetOrigin:
-  serializedVersion: 1
-  productId: 235559
-  packageName: Violet Themed UI
-  packageVersion: 1.2
-  assetPath: Assets/Violet Theme Ui/Panels/White Panel Yellow.png
-  uploadId: 767621

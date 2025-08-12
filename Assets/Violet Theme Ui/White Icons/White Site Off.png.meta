@@ -1,5 +1,12 @@
 fileFormatVersion: 2
 guid: 67dc6f01d20779546b94657ac4a054c4
+AssetOrigin:
+  serializedVersion: 1
+  productId: 235559
+  packageName: Violet Themed UI
+  packageVersion: 1.1
+  assetPath: Assets/Violet Theme Ui/White Icons/White Site Off.png
+  uploadId: 700144
 TextureImporter:
   internalIDToNameTable:
   - first:
@@ -180,10 +187,3 @@ TextureImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
-AssetOrigin:
-  serializedVersion: 1
-  productId: 235559
-  packageName: Violet Themed UI
-  packageVersion: 1.2
-  assetPath: Assets/Violet Theme Ui/White Icons/White Site Off.png
-  uploadId: 767621

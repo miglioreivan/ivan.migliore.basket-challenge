@@ -1,5 +1,12 @@
 fileFormatVersion: 2
 guid: f791f4cb3fbccc1419eaca61ce79eae5
+AssetOrigin:
+  serializedVersion: 1
+  productId: 235559
+  packageName: Violet Themed UI
+  packageVersion: 1.1
+  assetPath: Assets/Violet Theme Ui/White Icons/White Bluetooth Off.png
+  uploadId: 700144
 TextureImporter:
   internalIDToNameTable:
   - first:
@@ -206,10 +213,3 @@ TextureImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
-AssetOrigin:
-  serializedVersion: 1
-  productId: 235559
-  packageName: Violet Themed UI
-  packageVersion: 1.2
-  assetPath: Assets/Violet Theme Ui/White Icons/White Bluetooth Off.png
-  uploadId: 767621
