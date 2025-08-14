@@ -91,7 +91,7 @@ public class GameController : MonoBehaviour
         pointsTextFeedback.gameObject.SetActive(false);
 
         // Calculates the horizontal distance to the hoop and normalizes it.
-        Vector3 distXZ = new Vector3(pos.position.x - ball.position.x, 0, pos.position.z - ball.position.z);
+        Vector3 distXZ = new Vector3(CurrentTarget.position.x - pos.position.x, 0, CurrentTarget.position.z - pos.position.z);
         float distanceMagnitude = Mathf.Clamp01(distXZ.magnitude / 10f);
 
         // Sets the ball's position.
